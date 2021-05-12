@@ -1,8 +1,8 @@
-Performance of PageRank using 32-bit floats vs 64-bit floats (pull, CSR).
+Comparison of PageRank using float vs bfloat16 as the storage type (pull, CSR).
 
-This experiment was for comparing the performance between:
-1. Find pagerank using 32-bit floats (**float**).
-2. Find pagerank using 64-bit floats (**double**).
+This experiment was for comparing the result between:
+1. Find pagerank using float as the storage type.
+2. Find pagerank using bfloat16 as the storage type.
 
 Both datatypes were attempted on different types of graphs, running each
 technique 5 times per graph to get a good time measure. It seems using

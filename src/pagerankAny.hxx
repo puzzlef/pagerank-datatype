@@ -22,14 +22,14 @@ template <class T>
 void pagerankFactor(vector<T>& a, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, float p) {
   for (int u=0; u<N; u++) {
     int d = vdata[u];
-    a[u] = d>0? p/d : 0;
+    a[u] = d>0? p/d : 0.0f;
   }
 }
 
 template <class T>
 void pagerankCalculate(vector<T>& a, const vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, float c0) {
   for (int v=0; v<N; v++)
-    a[v] = c0 + sumAt(c, slice(efrom, vfrom[v], vfrom[v+1]));
+    a[v] = c0 + sumAt(c, slice(efrom, vfrom[v], vfrom[v+1]), 0.0f);
 }
 
 template <class T>
@@ -49,7 +49,7 @@ int pagerankAnyLoop(vector<T>& a, vector<T>& r, const vector<T>& f, vector<T>& c
 }
 
 template <class T>
-int pagerankAnyCore(vector<T>& a, vector<T>& r, vector<T>& f, vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, const vector<float> *q, float p, float E, int L) {
+int pagerankAnyCore(vector<T>& a, vector<T>& r, vector<T>& f, vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, const vector<T> *q, float p, float E, int L) {
   if (q) copy(r, *q);
   else fill(r, T(1.0f/N));
   pagerankFactor(f, vfrom, efrom, vdata, N, p);

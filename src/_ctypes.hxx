@@ -1,7 +1,9 @@
 #pragma once
 #include <cstdint>
+#include <istream>
 
 using std::uint16_t;
+using std::istream;
 
 
 
