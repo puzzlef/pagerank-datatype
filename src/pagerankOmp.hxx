@@ -29,7 +29,7 @@ void pagerankFactorOmp(vector<T>& a, const vector<int>& vfrom, const vector<int>
 }
 
 template <class T>
-void pagerankOmpOnce(vector<T>& a, const vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, T c0) {
+void pagerankCalculateOmp(vector<T>& a, const vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int N, T c0) {
   #pragma omp parallel for schedule(static,4096)
   for (int v=0; v<N; v++)
     a[v] = c0 + sumAt(c, slice(efrom, vfrom[v], vfrom[v+1]));
@@ -42,7 +42,7 @@ int pagerankOmpLoop(vector<T>& a, vector<T>& r, const vector<T>& f, vector<T>& c
   for (; l<L; l++) {
     T c0 = pagerankTeleportOmp(r, vfrom, efrom, vdata, N, p);
     multiplyOmp(c, r, f);
-    pagerankOmpOnce(a, c, vfrom, efrom, vdata, N, c0);
+    pagerankCalculateOmp(a, c, vfrom, efrom, vdata, N, c0);
     T e1 = absErrorOmp(a, r);
     if (e1 < E || e1 == e0) break;
     swap(a, r);
