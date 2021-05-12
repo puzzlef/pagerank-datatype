@@ -210,22 +210,22 @@ void addValueAt(vector<T>& a, const T& v, I&& is) {
 // ABS-ERROR
 // ---------
 
-template <class T>
-auto absError(const T *x, const T *y, int N) {
+template <class T, class U>
+auto absError(const T *x, const U *y, int N) {
   T a = T();
   for (int i=0; i<N; i++)
     a += abs(x[i] - y[i]);
   return a;
 }
 
-template <class T>
-auto absError(const vector<T>& x, const vector<T>& y) {
+template <class T, class U>
+auto absError(const vector<T>& x, const vector<U>& y) {
   return absError(x.data(), y.data(), x.size());
 }
 
 
-template <class T>
-auto absErrorOmp(const T *x, const T *y, int N) {
+template <class T, class U>
+auto absErrorOmp(const T *x, const U *y, int N) {
   T a = T();
   #pragma omp parallel for schedule(static,4096) reduction(+:a)
   for (int i=0; i<N; i++)
@@ -233,8 +233,8 @@ auto absErrorOmp(const T *x, const T *y, int N) {
   return a;
 }
 
-template <class T>
-auto absErrorOmp(const vector<T>& x, const vector<T>& y) {
+template <class T, class U>
+auto absErrorOmp(const vector<T>& x, const vector<U>& y) {
   return absErrorOmp(x.data(), y.data(), x.size());
 }
 
