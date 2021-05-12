@@ -91,27 +91,27 @@ void copyOmp(vector<T>& a, const vector<T>& x) {
 // FILL
 // ----
 
-template <class T>
-void fill(T *a, int N, const T& v) {
+template <class T, class U>
+void fill(T *a, int N, const U& v) {
   for (int i=0; i<N; i++)
     a[i] = v;
 }
 
-template <class T>
-void fill(vector<T>& a, const T& v) {
+template <class T, class U>
+void fill(vector<T>& a, const U& v) {
   fill(a.begin(), a.end(), v);
 }
 
 
-template <class T>
-void fillOmp(T *a, int N, const T& v) {
+template <class T, class U>
+void fillOmp(T *a, int N, const U& v) {
   #pragma omp parallel for schedule(static,4096)
   for (int i=0; i<N; i++)
     a[i] = v;
 }
 
-template <class T>
-void fillOmp(vector<T>& a, const T& v) {
+template <class T, class U>
+void fillOmp(vector<T>& a, const U& v) {
   fillOmp(a.data(), (int) a.size(), v);
 }
 
@@ -157,17 +157,16 @@ auto sum(const vector<T>& x) {
 // SUM-AT
 // ------
 
-template <class T, class I>
-auto sumAt(const T *x, I&& is) {
-  T a = T();
+template <class T, class I, class U=T>
+auto sumAt(const T *x, I&& is, U a=U()) {
   for (int i : is)
     a += x[i];
   return a;
 }
 
-template <class T, class I>
-auto sumAt(const vector<T>& x, I&& is) {
-  return sumAt(x.data(), is);
+template <class T, class I, class U=T>
+auto sumAt(const vector<T>& x, I&& is, U a=U()) {
+  return sumAt(x.data(), is, a);
 }
 
 
@@ -210,17 +209,16 @@ void addValueAt(vector<T>& a, const T& v, I&& is) {
 // ABS-ERROR
 // ---------
 
-template <class T, class U>
-auto absError(const T *x, const U *y, int N) {
-  T a = T();
+template <class T, class U, class V=T>
+auto absError(const T *x, const U *y, int N, V a=V()) {
   for (int i=0; i<N; i++)
     a += abs(x[i] - y[i]);
   return a;
 }
 
-template <class T, class U>
-auto absError(const vector<T>& x, const vector<U>& y) {
-  return absError(x.data(), y.data(), x.size());
+template <class T, class U, class V=T>
+auto absError(const vector<T>& x, const vector<U>& y, V a=V()) {
+  return absError(x.data(), y.data(), x.size(), a);
 }
 
 

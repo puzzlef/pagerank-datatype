@@ -63,7 +63,7 @@ auto vertexData(G& x) {
 
 template <class G, class T, class J>
 auto vertexContainer(const G& x, const vector<T>& vs, J&& ks) {
-  auto a = x.vertexContainer(T()); int i = 0;
+  vector<T> a(x.span()); int i = 0;
   for (auto u : ks)
     a[u] = vs[i++];
   return a;
