@@ -6,5 +6,4 @@
 #include "transpose.hxx"
 #include "mtx.hxx"
 #include "pagerank.hxx"
-#include "pagerankFloat.hxx"
-#include "pagerankFp16.hxx"
+#include "pagerankAny.hxx"

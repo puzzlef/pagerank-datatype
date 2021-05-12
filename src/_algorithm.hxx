@@ -71,18 +71,28 @@ void eraseIndex(vector<T>& x, int i, int I) {
 // COPY
 // ----
 
-template <class T>
-void copy(vector<T>& a, const vector<T>& x) {
-  copy(x.begin(), x.end(), a.begin());
+template <class T, class U>
+void copy(T *a, U *x, int N) {
+  for (int i=0; i<N; i++)
+    a[i] = x[i];
+}
+
+template <class T, class U>
+void copy(vector<T>& a, const vector<U>& x) {
+  copy(a.data(), x.data(), int(x.size()));
 }
 
 
-template <class T>
-void copyOmp(vector<T>& a, const vector<T>& x) {
-  int N = x.size();
+template <class T, class U>
+void copyOmp(T *a, U *x, int N) {
   #pragma omp parallel for schedule(static,4096)
   for (int i=0; i<N; i++)
     a[i] = x[i];
+}
+
+template <class T, class U>
+void copyOmp(vector<T>& a, const vector<T>& x) {
+  copyOmp(a.data(), x.data(), int(x.size()));
 }
 
 
@@ -99,7 +109,7 @@ void fill(T *a, int N, const U& v) {
 
 template <class T, class U>
 void fill(vector<T>& a, const U& v) {
-  fill(a.begin(), a.end(), v);
+  fill(a.data(), int(a.size()), v);
 }
 
 
@@ -112,7 +122,7 @@ void fillOmp(T *a, int N, const U& v) {
 
 template <class T, class U>
 void fillOmp(vector<T>& a, const U& v) {
-  fillOmp(a.data(), (int) a.size(), v);
+  fillOmp(a.data(), int(a.size()), v);
 }
 
 
@@ -121,14 +131,14 @@ void fillOmp(vector<T>& a, const U& v) {
 // FILL-AT
 // -------
 
-template <class T, class I>
-void fillAt(T *a, const T& v, I&& is) {
+template <class T, class U, class I>
+void fillAt(T *a, const U& v, I&& is) {
   for (int i : is)
     a[i] = v;
 }
 
-template <class T, class I>
-void fillAt(vector<T>& a, const T& v, I&& is) {
+template <class T, class U, class I>
+void fillAt(vector<T>& a, const U& v, I&& is) {
   fillAt(a.data(), v, is);
 }
 
@@ -138,17 +148,30 @@ void fillAt(vector<T>& a, const T& v, I&& is) {
 // SUM
 // ---
 
-template <class T>
-auto sum(const T *x, int N) {
-  T a = T();
+template <class T, class U=T>
+U sum(const T *x, int N, U a=U()) {
   for (int i=0; i<N; i++)
     a += x[i];
   return a;
 }
 
-template <class T>
-auto sum(const vector<T>& x) {
-  return sum(x.data(), x.size());
+template <class T, class U=T>
+U sum(const vector<T>& x, U a=U()) {
+  return sum(x.data(), int(x.size()), a);
+}
+
+
+template <class T, class U=T>
+U sumOmp(const T *x, int N, U a=U()) {
+  #pragma omp parallel for schedule(static,4096) reduction(+:a)
+  for (int i=0; i<N; i++)
+    a += x[i];
+  return a;
+}
+
+template <class T, class U=T>
+U sumOmp(const vector<T>& x, U a=U()) {
+  return sumOmp(x.data(), int(x.size()), a);
 }
 
 
@@ -158,14 +181,14 @@ auto sum(const vector<T>& x) {
 // ------
 
 template <class T, class I, class U=T>
-auto sumAt(const T *x, I&& is, U a=U()) {
+U sumAt(const T *x, I&& is, U a=U()) {
   for (int i : is)
     a += x[i];
   return a;
 }
 
 template <class T, class I, class U=T>
-auto sumAt(const vector<T>& x, I&& is, U a=U()) {
+U sumAt(const vector<T>& x, I&& is, U a=U()) {
   return sumAt(x.data(), is, a);
 }
 
@@ -175,15 +198,28 @@ auto sumAt(const vector<T>& x, I&& is, U a=U()) {
 // ADD-VALUE
 // ---------
 
-template <class T>
-void addValue(T *a, int N, const T& v) {
+template <class T, class U>
+void addValue(T *a, int N, const U& v) {
   for (int i=0; i<N; i++)
     a[i] += v;
 }
 
-template <class T>
-void addValue(vector<T>& a, const T& v) {
-  addValue(a.data(), a.size(), v);
+template <class T, class U>
+void addValue(vector<T>& a, const U& v) {
+  addValue(a.data(), int(a.size()), v);
+}
+
+
+template <class T, class U>
+void addValueOmp(T *a, int N, const U& v) {
+  #pragma omp parallel for schedule(static,4096)
+  for (int i=0; i<N; i++)
+    a[i] += v;
+}
+
+template <class T, class U>
+void addValueOmp(vector<T>& a, const U& v) {
+  addValueOmp(a.data(), int(a.size()), v);
 }
 
 
@@ -192,14 +228,14 @@ void addValue(vector<T>& a, const T& v) {
 // ADD-VALUE-AT
 // ------------
 
-template <class T, class I>
-void addValueAt(T *a, const T& v, I&& is) {
+template <class T, class U, class I>
+void addValueAt(T *a, const U& v, I&& is) {
   for (int i : is)
     a[i] += v;
 }
 
-template <class T, class I>
-void addValueAt(vector<T>& a, const T& v, I&& is) {
+template <class T, class U, class I>
+void addValueAt(vector<T>& a, const U& v, I&& is) {
   addValueAt(a.data(), v, is);
 }
 
@@ -210,30 +246,29 @@ void addValueAt(vector<T>& a, const T& v, I&& is) {
 // ---------
 
 template <class T, class U, class V=T>
-auto absError(const T *x, const U *y, int N, V a=V()) {
+V absError(const T *x, const U *y, int N, V a=V()) {
   for (int i=0; i<N; i++)
     a += abs(x[i] - y[i]);
   return a;
 }
 
 template <class T, class U, class V=T>
-auto absError(const vector<T>& x, const vector<U>& y, V a=V()) {
-  return absError(x.data(), y.data(), x.size(), a);
+V absError(const vector<T>& x, const vector<U>& y, V a=V()) {
+  return absError(x.data(), y.data(), int(x.size()), a);
 }
 
 
-template <class T, class U>
-auto absErrorOmp(const T *x, const U *y, int N) {
-  T a = T();
+template <class T, class U, class V=T>
+V absErrorOmp(const T *x, const U *y, int N, V a=V()) {
   #pragma omp parallel for schedule(static,4096) reduction(+:a)
   for (int i=0; i<N; i++)
     a += abs(x[i] - y[i]);
   return a;
 }
 
-template <class T, class U>
-auto absErrorOmp(const vector<T>& x, const vector<U>& y) {
-  return absErrorOmp(x.data(), y.data(), x.size());
+template <class T, class U, class V=T>
+V absErrorOmp(const vector<T>& x, const vector<U>& y, V a=V()) {
+  return absErrorOmp(x.data(), y.data(), int(x.size()), a);
 }
 
 
@@ -242,26 +277,26 @@ auto absErrorOmp(const vector<T>& x, const vector<U>& y) {
 // MULTIPLY
 // --------
 
-template <class T>
-void multiply(T *a, const T *x, const T *y, int N) {
+template <class T, class U, class V>
+void multiply(T *a, const U *x, const V *y, int N) {
   for (int i=0; i<N; i++)
     a[i] = x[i] * y[i];
 }
 
-template <class T>
-void multiply(vector<T>& a, const vector<T>& x, const vector<T>& y) {
-  multiply(a.data(), x.data(), y.data(), x.size());
+template <class T, class U, class V>
+void multiply(vector<T>& a, const vector<U>& x, const vector<V>& y) {
+  multiply(a.data(), x.data(), y.data(), int(x.size()));
 }
 
 
-template <class T>
-void multiplyOmp(T *a, const T *x, const T *y, int N) {
+template <class T, class U, class V>
+void multiplyOmp(T *a, const U *x, const V *y, int N) {
   #pragma omp parallel for schedule(static,4096)
   for (int i=0; i<N; i++)
     a[i] = x[i] * y[i];
 }
 
-template <class T>
-void multiplyOmp(vector<T>& a, const vector<T>& x, const vector<T>& y) {
-  multiplyOmp(a.data(), x.data(), y.data(), x.size());
+template <class T, class U, class V>
+void multiplyOmp(vector<T>& a, const vector<U>& x, const vector<V>& y) {
+  multiplyOmp(a.data(), x.data(), y.data(), int(x.size()));
 }
