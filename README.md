@@ -1,4 +1,4 @@
-Performance of PageRank using 32-bit floats vs 64-bit floats (pull, CSR).
+Performance of PageRank using 32-bit floats vs 64-bit floats ([pull], [CSR]).
 
 This experiment was for comparing the performance between:
 1. Find pagerank using 32-bit floats (**float**).
@@ -11,10 +11,10 @@ This could be attributed to increased memory bandwidth requirement. However,
 since most of the data for a graph (CSR) is stored as 32-bit ints, it possibly
 makes up most of the memory bottleneck, and not the rank vector.
 
-See ["pagerank-push-vs-pull"] for a discussion on *push* vs *pull* method, and["pagerank-class-vs-csr"] for a comparisionbetween using a C++ DiGraph class
-directly vs using its CSR representation. The input data used for this
-experiment is available at ["graphs"] (for small ones), and the
-[SuiteSparse Matrix Collection].
+The input data used for this experiment is available at ["graphs"] (for small
+ones), and the [SuiteSparse Matrix Collection].
+
+<br>
 
 ```bash
 $ g++ -O3 main.cxx
@@ -163,7 +163,7 @@ $ ...
 
 [![](https://i.imgur.com/wmbbEzJ.jpg)](https://www.youtube.com/watch?v=rKv_l1RnSqs)
 
-["pagerank-push-vs-pull"]: https://github.com/puzzlef/pagerank-push-vs-pull
-["pagerank-class-vs-csr"]: https://github.com/puzzlef/pagerank-class-vs-csr
+[pull]: https://github.com/puzzlef/pagerank-push-vs-pull
+[CSR]: https://github.com/puzzlef/pagerank-class-vs-csr
 ["graphs"]: https://github.com/puzzlef/graphs
 [SuiteSparse Matrix Collection]: https://suitesparse-collection-website.herokuapp.com
