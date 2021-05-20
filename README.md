@@ -1,4 +1,4 @@
-Comparison of PageRank using [float] vs [bfloat16] as the storage type (pull, CSR).
+Comparison of PageRank using [float] vs [bfloat16] as the storage type ([pull], [CSR]).
 
 This experiment was for comparing the result between:
 1. Find pagerank using **float** as the storage type.
@@ -10,10 +10,10 @@ technique 5 times per graph to get a good time measure. Unfortunately it seems
 simply replacing **float** vectors with **bfloat16** vectors). Using [fp16]
 might work, but likely give negligible performance improvement over float.
 
-See ["pagerank-push-vs-pull"] for a discussion on *push* vs *pull* method, and["pagerank-class-vs-csr"] for a comparision between using a C++ DiGraph class
-directly vs using its CSR representation. The input data used for this
-experiment is available at ["graphs"] (for small ones), and the
-[SuiteSparse Matrix Collection].
+The input data used for this experiment is available at ["graphs"] (for small
+ones), and the [SuiteSparse Matrix Collection].
+
+<br>
 
 ```bash
 $ g++ -O3 main.cxx
@@ -168,7 +168,7 @@ $ ...
 [float]: https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 [bfloat16]: https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
 [fp16]: https://en.wikipedia.org/wiki/Half-precision_floating-point_format
-["pagerank-push-vs-pull"]: https://github.com/puzzlef/pagerank-push-vs-pull
-["pagerank-class-vs-csr"]: https://github.com/puzzlef/pagerank-class-vs-csr
+[pull]: https://github.com/puzzlef/pagerank-push-vs-pull
+[CSR]: https://github.com/puzzlef/pagerank-class-vs-csr
 ["graphs"]: https://github.com/puzzlef/graphs
 [SuiteSparse Matrix Collection]: https://suitesparse-collection-website.herokuapp.com
