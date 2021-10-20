@@ -1,15 +1,19 @@
 #pragma once
+#include <utility>
 #include <string>
 #include <vector>
 #include <ostream>
 #include <fstream>
 #include <iostream>
+#include <type_traits>
 
-using std::ios;
+using std::pair;
 using std::string;
 using std::vector;
+using std::ios;
 using std::ostream;
 using std::ifstream;
+using std::is_fundamental;
 using std::cout;
 
 
@@ -33,77 +37,37 @@ string readFile(const char *pth) {
 // WRITE
 // -----
 
-template <class T>
-void write(ostream& a, const T *x, int N) {
-  a << "{";
-  for (int i=0; i<N; i++)
-    a << " " << x[i];
-  a << " }";
+template <class K, class V>
+ostream& operator<<(ostream& a, const pair<K, V>& x) {
+  a << x.first << ": " << x.second;
+  return a;
 }
 
 template <class T>
-void write(ostream& a, const vector<T>& x) {
-  write(a, x.data(), x.size());
-}
-
-template <class T>
-void write(ostream& a, const vector<vector<T>>& x) {
-  a << "{\n";
-  for (auto& v : x) {
-    a << "  "; write(a, v);
-  }
-  a << "}";
-}
-
-
-template <class G>
-void write(ostream& a, const G& x, bool all=false) {
-  a << "order: " << x.order() << " size: " << x.size();
-  if (!all) { a << " {}"; return; }
-  a << " {\n";
-  for (int u : x.vertices()) {
-    a << "  " << u << " ->";
-    for (int v : x.edges(u))
+ostream& operator<<(ostream& a, const vector<T>& x) {
+  if (is_fundamental<T>::value) {
+    a << "{";
+    for (T v : x)
       a << " " << v;
-    a << "\n";
+    a << " }";
   }
-  a << "}";
+  else {
+    a << "{\n";
+    for (const T& v : x)
+      a << "  " << v << "\n";
+    a << "}";
+  }
+  return a;
 }
 
 
 
 
-// PRINT
-// -----
+// PRINT*
+// ------
 
 template <class T>
-void print(const T *x, int N) { write(cout, x, N); }
+void print(const T& x) {cout << x; }
 
 template <class T>
-void print(const vector<T>& x) { write(cout, x); }
-
-template <class T>
-void print(const vector<vector<T>>& x) { write(cout, x); }
-
-
-template <class G>
-void print(const G& x, bool all=false) { write(cout, x, all); }
-
-
-
-
-// PRINTLN
-// -------
-
-template <class T>
-void println(const T *x, int N) { print(x, N); cout << "\n"; }
-
-template <class T>
-void println(const vector<T>& x) { print(x); cout << "\n"; }
-
-template <class T>
-void println(const vector<vector<T>>& x) { print(x); cout << "\n"; }
-
-
-template <class G>
-void println(const G& x, bool all=false) { print(x, all); cout << "\n"; }
+void println(const T& x) { cout << x << "\n"; }
