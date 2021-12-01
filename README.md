@@ -1,4 +1,4 @@
-Performance of CUDA-based PageRank using **32-bit floats** vs **64-bit floats** ([pull], [CSR]).
+Performance of [nvGraph] PageRank using **32-bit floats** vs **64-bit floats**.
 
 This experiment was for comparing the performance between:
 1. Find pagerank using *32-bit floats* (**float**).
@@ -7,12 +7,10 @@ This experiment was for comparing the performance between:
 Both datatypes were attempted on different types of graphs, running each
 technique 5 times per graph to get a good time measure. It seems using
 **double** datatype **increases execution time by a small factor** in all cases.
-With respect to **GM-RATIO**, using *64-bit floating point rank vector* is **24%
-slower** **(1.24x)** than using 32-bit floating point rank vector. With respect
-to **AM-RATIO**, using *64-bit floating point rank vector* is **34% slower
-(1.34x)**. This could be attributed to increased memory bandwidth requirement.
-However, since most of the data for a graph (CSR) is stored as 32-bit ints, it
-possibly makes up most of the memory bottleneck, and not the rank vector.
+With respect to **GM-RATIO**, using *64-bit floating point rank vector* is **52%
+slower** **(1.52x)** than using 32-bit floating point rank vector. With respect
+to **AM-RATIO**, using *64-bit floating point rank vector* is **67% slower
+(1.67x)**. This could be attributed to increased memory bandwidth requirement.
 
 All outputs are saved in [out](out/) and a small part of the output is listed
 here. Some [charts] are also included below, generated from [sheets]. The input
@@ -33,22 +31,22 @@ $ ...
 # Loading graph /home/subhajit/data/web-Stanford.mtx ...
 # order: 281903 size: 2312497 {}
 # order: 281903 size: 2312497 {} (transposeWithDegree)
-# [00011.816 ms; 063 iters.] [6.5175e-07 err.] pagerankDouble
-# [00011.265 ms; 063 iters.] [7.1775e-07 err.] pagerankFloat
+# [00014.689 ms; 000 iters.] [0.0000e+00 err.] pagerankDouble
+# [00011.340 ms; 000 iters.] [1.1893e-07 err.] pagerankFloat
 #
 # ...
 #
 # Loading graph /home/subhajit/data/soc-LiveJournal1.mtx ...
 # order: 4847571 size: 68993773 {}
 # order: 4847571 size: 68993773 {} (transposeWithDegree)
-# [00234.717 ms; 051 iters.] [3.2842e-06 err.] pagerankDouble
-# [00158.415 ms; 051 iters.] [3.1327e-06 err.] pagerankFloat
+# [00293.897 ms; 000 iters.] [0.0000e+00 err.] pagerankDouble
+# [00168.549 ms; 000 iters.] [6.9520e-08 err.] pagerankFloat
 #
 # ...
 ```
 
-[![](https://i.imgur.com/fA2z7sV.png)][sheetp]
-[![](https://i.imgur.com/fAvfjWI.png)][sheetp]
+[![](https://i.imgur.com/rYpzAlM.png)][sheetp]
+[![](https://i.imgur.com/q9kgf0Z.png)][sheetp]
 
 <br>
 <br>
@@ -56,6 +54,10 @@ $ ...
 
 ## References
 
+- [nvGraph pagerank example, EN605.617, JHU-EP-Intro2GPU](https://github.com/JHU-EP-Intro2GPU/EN605.617/blob/master/module9/nvgraph_examples/nvgraph_Pagerank.cpp)
+- [nvGraph pagerank example, CUDA Toolkit Documentation](https://docs.nvidia.com/cuda/archive/10.0/nvgraph/index.html#nvgraph-pagerank-example)
+- [nvGraph Library User's Guide](https://docs.nvidia.com/cuda/archive/10.1/pdf/nvGRAPH_Library.pdf)
+- [RAPIDS nvGraph NVIDIA graph library][nvGraph]
 - [Adjusting PageRank parameters and Comparing results](https://arxiv.org/abs/2108.02997)
 - [PageRank Algorithm, Mining massive Datasets (CS246), Stanford University](https://www.youtube.com/watch?v=ke9g8hB0MEo)
 - [SuiteSparse Matrix Collection]
@@ -68,9 +70,8 @@ $ ...
 [Prof. Dip Sankar Banerjee]: https://sites.google.com/site/dipsankarban/
 [Prof. Kishore Kothapalli]: https://www.iiit.ac.in/people/faculty/kkishore/
 [SuiteSparse Matrix Collection]: https://sparse.tamu.edu
+[nvGraph]: https://github.com/rapidsai/nvgraph
 ["graphs"]: https://github.com/puzzlef/graphs
-[pull]: https://github.com/puzzlef/pagerank-push-vs-pull
-[CSR]: https://github.com/puzzlef/pagerank-class-vs-csr
-[charts]: https://photos.app.goo.gl/WYDPyR6BaspyYByH8
-[sheets]: https://docs.google.com/spreadsheets/d/1gKWLl5fjutalsFTbYObPjmBrWTmZiTYgCgH_7s8UxtE/edit?usp=sharing
-[sheetp]: https://docs.google.com/spreadsheets/d/e/2PACX-1vSrHd3r7CW_4DJMuoqzvvCdWri5ZanzWG1d6wk-tEJEe-ek-toEDtx_enhvXpBxuZXbvRY4cuwk4-Lq/pubhtml
+[charts]: https://photos.app.goo.gl/eA471JBX91eGxvuy7
+[sheets]: https://docs.google.com/spreadsheets/d/1GKfPQQzqbchRDfxa_6Ajqskgz_JmjOUnYTpf9AJP6bg/edit?usp=sharing
+[sheetp]: https://docs.google.com/spreadsheets/d/e/2PACX-1vQykW749moJ_5S-6Sb_Us7uxuMVfQDD8KfQR8F4j0OOoA073f9tH4bd4rrWKcUnsg_UxCrblwlIM_d2/pubhtml
