@@ -1,14 +1,78 @@
 #pragma once
-#include <cmath>
 #include <vector>
+#include <unordered_map>
+#include <iterator>
 #include <algorithm>
+#include <functional>
 
 using std::vector;
+using std::unordered_map;
+using std::iterator_traits;
+using std::hash;
+using std::for_each;
+using std::any_of;
+using std::all_of;
 using std::find;
+using std::find_if;
+using std::lower_bound;
 using std::count;
 using std::count_if;
-using std::copy;
-using std::abs;
+using std::transform;
+using std::set_difference;
+using std::back_inserter;
+
+
+
+
+// FOR-EACH
+// --------
+
+template <class I, class F>
+auto forEach(I ib, I ie, F fn) {
+  return for_each(ib, ie, fn);
+}
+
+template <class J, class F>
+auto forEach(const J& x, F fn) {
+  return for_each(x.begin(), x.end(), fn);
+}
+
+template <class J, class F>
+auto forEach(J& x, F fn) {
+  return for_each(x.begin(), x.end(), fn);
+}
+
+
+
+
+// ANY-OF
+// ------
+
+template <class I, class F>
+auto anyOf(I ib, I ie, F fn) {
+  return any_of(ib, ie, fn);
+}
+
+template <class J, class F>
+auto anyOf(const J& x, F fn) {
+  return any_of(x.begin(), x.end(), fn);
+}
+
+
+
+
+// ALL-OF
+// ------
+
+template <class I, class F>
+auto allOf(I ib, I ie, F fn) {
+  return all_of(ib, ie, fn);
+}
+
+template <class J, class F>
+auto allOf(const J& x, F fn) {
+  return all_of(x.begin(), x.end(), fn);
+}
 
 
 
@@ -23,15 +87,86 @@ auto find(const J& x, const T& v) {
 
 template <class J, class T>
 int findIndex(const J& x, const T& v) {
-  auto i = find(x.begin(), x.end(), v);
-  return i==x.end()? -1 : i-x.begin();
+  return find(x.begin(), x.end(), v) - x.begin();
+}
+
+template <class J, class T>
+int findEqIndex(const J& x, const T& v) {
+  auto it = find(x.begin(), x.end(), v);
+  return it==x.end()? -1 : it-x.begin();
+}
+
+
+template <class I, class F>
+auto findIf(I ib, I ie, F fn) {
+  return find_if(ib, ie, fn);
+}
+
+template <class J, class F>
+auto findIf(const J& x, F fn) {
+  return find_if(x.begin(), x.end(), fn);
+}
+
+template <class J, class F>
+int findIfIndex(const J& x, F fn) {
+  return find_if(x.begin(), x.end(), fn) - x.begin();
+}
+
+template <class J, class F>
+int findIfEqIndex(const J& x, F fn) {
+  auto it = find_if(x.begin(), x.end(), fn);
+  return it==x.end()? -1 : it-x.begin();
 }
 
 
 
 
-// COUNT-*
-// -------
+// LOWER-BOUND
+// -----------
+
+template <class J, class T>
+auto lowerBound(const J& x, const T& v) {
+  return lower_bound(x.begin(), x.end(), v);
+}
+
+template <class J, class T, class F>
+auto lowerBound(const J& x, const T& v, F fl) {
+  return lower_bound(x.begin(), x.end(), v, fl);
+}
+
+template <class J, class T>
+int lowerBoundIndex(const J& x, const T& v) {
+  return lower_bound(x.begin(), x.end(), v) - x.begin();
+}
+
+template <class J, class T, class F>
+int lowerBoundIndex(const J& x, const T& v, F fl) {
+  return lower_bound(x.begin(), x.end(), v, fl) - x.begin();
+}
+
+template <class J, class T>
+int lowerBoundEqIndex(const J& x, const T& v) {
+  auto it = lower_bound(x.begin(), x.end(), v);
+  return it==x.end() || *it!=v? -1 : it-x.begin();
+}
+
+template <class J, class T, class F>
+int lowerBoundEqIndex(const J& x, const T& v, F fl) {
+  auto it = lower_bound(x.begin(), x.end(), v, fl);
+  return it==x.end() || *it!=v? -1 : it-x.begin();
+}
+
+template <class J, class T, class F, class G>
+int lowerBoundEqIndex(const J& x, const T& v, F fl, G fe) {
+  auto it = lower_bound(x.begin(), x.end(), v, fl);
+  return it==x.end() || !fe(*it, v)? -1 : it-x.begin();
+}
+
+
+
+
+// COUNT
+// -----
 
 template <class J, class T>
 int count(const J& x, const T& v) {
@@ -52,218 +187,156 @@ int countIf(const J& x, F fn) {
 
 
 
-// ERASE
-// -----
+// COUNT-ALL
+// ---------
 
-template <class T>
-void eraseIndex(vector<T>& x, int i) {
-  x.erase(x.begin()+i);
+template <class I>
+auto countAll(I ib, I ie) {
+  using T = typename I::value_type;
+  unordered_map<T, int> a;
+  for_each(ib, ie, [&](const auto& v) { a[v]++; });
+  return a;
 }
 
-template <class T>
-void eraseIndex(vector<T>& x, int i, int I) {
-  x.erase(x.begin()+i, x.begin()+I);
-}
-
-
-
-
-// COPY
-// ----
-
-template <class T>
-void copy(vector<T>& a, const vector<T>& x) {
-  copy(x.begin(), x.end(), a.begin());
-}
-
-
-template <class T>
-void copyOmp(vector<T>& a, const vector<T>& x) {
-  int N = x.size();
-  #pragma omp parallel for schedule(static,4096)
-  for (int i=0; i<N; i++)
-    a[i] = x[i];
+template <class J>
+auto countAll(const J& x) {
+  return countAll(x.begin(), x.end());
 }
 
 
 
 
-// FILL
-// ----
-
-template <class T>
-void fill(T *a, int N, const T& v) {
-  for (int i=0; i<N; i++)
-    a[i] = v;
-}
-
-template <class T>
-void fill(vector<T>& a, const T& v) {
-  fill(a.begin(), a.end(), v);
-}
-
-
-template <class T>
-void fillOmp(T *a, int N, const T& v) {
-  #pragma omp parallel for schedule(static,4096)
-  for (int i=0; i<N; i++)
-    a[i] = v;
-}
-
-template <class T>
-void fillOmp(vector<T>& a, const T& v) {
-  fillOmp(a.data(), (int) a.size(), v);
-}
-
-
-
-
-// FILL-AT
+// INDICES
 // -------
 
-template <class T, class I>
-void fillAt(T *a, const T& v, I&& is) {
-  for (int i : is)
-    a[i] = v;
-}
-
-template <class T, class I>
-void fillAt(vector<T>& a, const T& v, I&& is) {
-  fillAt(a.data(), v, is);
-}
-
-
-
-
-// SUM
-// ---
-
-template <class T>
-auto sum(const T *x, int N) {
-  T a = T();
-  for (int i=0; i<N; i++)
-    a += x[i];
+template <class I>
+auto indices(I ib, I ie) {
+  using K = typename iterator_traits<I>::value_type;
+  unordered_map<K, int> a; int i = 0;
+  for (I it=ib; it!=ie; ++it)
+    a[*it] = i++;
   return a;
 }
 
-template <class T>
-auto sum(const vector<T>& x) {
-  return sum(x.data(), x.size());
+template <class J>
+auto indices(const J& x) {
+  return indices(x.begin(), x.end());
 }
 
 
 
 
-// SUM-AT
-// ------
+// IDENTIFIERS
+// -----------
 
-template <class T, class I>
-auto sumAt(const T *x, I&& is) {
-  T a = T();
-  for (int i : is)
-    a += x[i];
+template <class I>
+auto identifiers(I ib, I ie) {
+  using K = typename iterator_traits<I>::value_type;
+  unordered_map<K, int> a; int i = 0;
+  for (I it=ib; it!=ie; ++it)
+    if (a.count(*it)==0) a[*it] = i++;
   return a;
 }
 
-template <class T, class I>
-auto sumAt(const vector<T>& x, I&& is) {
-  return sumAt(x.data(), is);
+template <class J>
+auto identifiers(const J& x) {
+  return identifiers(x.begin(), x.end());
 }
 
 
 
 
-// ADD-VALUE
+// TRANSFORM
 // ---------
 
-template <class T>
-void addValue(T *a, int N, const T& v) {
-  for (int i=0; i<N; i++)
-    a[i] += v;
-}
-
-template <class T>
-void addValue(vector<T>& a, const T& v) {
-  addValue(a.data(), a.size(), v);
+template <class J, class F>
+void transform(J& x, F fn) {
+  transform(x.begin(), x.end(), x.begin(), fn);
 }
 
 
 
 
-// ADD-VALUE-AT
-// ------------
+// SET-DIFFERENCE
+// --------------
 
-template <class T, class I>
-void addValueAt(T *a, const T& v, I&& is) {
-  for (int i : is)
-    a[i] += v;
+template <class L, class J, class K>
+void setDifference(L& a, const J& x, const K& y) {
+  set_difference(x.begin(), x.end(), y.begin(), y.end(), a.begin());
 }
 
-template <class T, class I>
-void addValueAt(vector<T>& a, const T& v, I&& is) {
-  addValueAt(a.data(), v, is);
+template <class T, class J, class K>
+void setDifference(vector<T>& a, const J& x, const K& y) {
+  set_difference(x.begin(), x.end(), y.begin(), y.end(), back_inserter(a));
 }
 
-
-
-
-// ABS-ERROR
-// ---------
-
-template <class T, class U>
-auto absError(const T *x, const U *y, int N) {
-  T a = T();
-  for (int i=0; i<N; i++)
-    a += abs(x[i] - y[i]);
+template <class J, class K>
+auto setDifference(const J& x, const K& y) {
+  using I = decltype(x.begin());
+  using T = typename iterator_traits<I>::value_type;
+  vector<T> a; setDifference(a, x, y);
   return a;
 }
 
-template <class T, class U>
-auto absError(const vector<T>& x, const vector<U>& y) {
-  return absError(x.data(), y.data(), x.size());
+
+
+
+// TO-*
+// ----
+
+template <class T, class I>
+void toVector(vector<T>& a, I ib, I ie) {
+  a.clear();
+  for (I it=ib; it!=ie; ++it)
+    a.push_back(*it);;
 }
 
-
-template <class T, class U>
-auto absErrorOmp(const T *x, const U *y, int N) {
-  T a = T();
-  #pragma omp parallel for schedule(static,4096) reduction(+:a)
-  for (int i=0; i<N; i++)
-    a += abs(x[i] - y[i]);
+template <class I>
+auto toVector(I ib, I ie) {
+  using T = typename I::value_type;
+  vector<T> a; toVector(a, ib, ie);
   return a;
 }
 
-template <class T, class U>
-auto absErrorOmp(const vector<T>& x, const vector<U>& y) {
-  return absErrorOmp(x.data(), y.data(), x.size());
+template <class T, class J>
+void toVector(vector<T>& a, const J& x) {
+  toVector(a, x.begin(), x.end());
+}
+
+template <class J>
+void toVector(const J& x) {
+  return toVector(x.begin(), x.end());
 }
 
 
 
 
-// MULTIPLY
-// --------
+// HASH-VALUE
+// ----------
 
-template <class T>
-void multiply(T *a, const T *x, const T *y, int N) {
-  for (int i=0; i<N; i++)
-    a[i] = x[i] * y[i];
+template <class T, class I>
+size_t hashValue(vector<T>& vs, I ib, I ie) {
+  size_t a = 0;
+  toVector(vs, ib, ie);
+  sort(vs.begin(), vs.end());
+  for (const T& v : vs)
+    a ^= hash<T>{}(v) + 0x9e3779b9 + (a<<6) + (a>>2); // from boost::hash_combine
+  return a;
 }
 
-template <class T>
-void multiply(vector<T>& a, const vector<T>& x, const vector<T>& y) {
-  multiply(a.data(), x.data(), y.data(), x.size());
+template <class I>
+size_t hashValue(I ib, I ie) {
+  using T = typename I::value_type;
+  vector<T> vs;
+  return hashValue(vs, ib, ie);
 }
 
-
-template <class T>
-void multiplyOmp(T *a, const T *x, const T *y, int N) {
-  #pragma omp parallel for schedule(static,4096)
-  for (int i=0; i<N; i++)
-    a[i] = x[i] * y[i];
+template <class T, class J>
+size_t hashValue(vector<T>& vs, const J& x) {
+  return hashValue(vs, x.begin(), x.end());
 }
 
-template <class T>
-void multiplyOmp(vector<T>& a, const vector<T>& x, const vector<T>& y) {
-  multiplyOmp(a.data(), x.data(), y.data(), x.size());
+template <class J>
+size_t hashValue(const J& x) {
+  return hashValue(x.begin(), x.end());
 }
