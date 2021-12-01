@@ -14,15 +14,15 @@ void runPagerank(const G& x, const H& xt, int repeat) {
   vector<float>  *initFloat  = nullptr;
   vector<double> *initDouble = nullptr;
 
-  // Find pagerank using 32-bit floats.
-  auto a1 = pagerankSeq(xt, initFloat, {repeat});
-  auto e1 = absError(a1.ranks, a1.ranks);
-  printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankFloat\n", a1.time, a1.iterations, e1);
-
   // Find pagerank using 64-bit floats.
-  auto a2 = pagerankSeq(xt, initDouble, {repeat});
-  auto e2 = absError(a2.ranks, a1.ranks);
-  printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankDouble\n", a2.time, a2.iterations, e2);
+  auto a1 = pagerankMonolithicSeq(x, xt, initDouble, {repeat});
+  auto e1 = l1Norm(a1.ranks, a1.ranks);
+  printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankDouble\n", a1.time, a1.iterations, e1);
+
+  // Find pagerank using 32-bit floats.
+  auto a2 = pagerankMonolithicSeq(x, xt, initFloat, {repeat});
+  auto e2 = l1Norm(a2.ranks, a1.ranks);
+  printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankFloat\n", a2.time, a2.iterations, e2);
 }
 
 
