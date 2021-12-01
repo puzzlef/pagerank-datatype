@@ -56,6 +56,7 @@ $ ...
 
 ## References
 
+- [CUDA by Example :: Jason Sanders, Edward Kandrot](https://gist.github.com/wolfram77/72c51e494eaaea1c21a9c4021ad0f320)
 - [Adjusting PageRank parameters and Comparing results](https://arxiv.org/abs/2108.02997)
 - [PageRank Algorithm, Mining massive Datasets (CS246), Stanford University](https://www.youtube.com/watch?v=ke9g8hB0MEo)
 - [SuiteSparse Matrix Collection]
