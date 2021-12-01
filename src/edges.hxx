@@ -58,7 +58,7 @@ auto edge(const G& x, int u) {
 // ---------
 
 template <class G, class J, class F, class D>
-auto edgeData(const G& x, J&& ks, F fm, D fp) {
+auto edgeData(const G& x, const J& ks, F fm, D fp) {
   using E = decltype(fm(0, 0));
   vector<E> a;
   vector<int> b;
@@ -71,12 +71,12 @@ auto edgeData(const G& x, J&& ks, F fm, D fp) {
 }
 
 template <class G, class J, class F>
-auto edgeData(const G& x, J&& ks, F fm) {
+auto edgeData(const G& x, const J& ks, F fm) {
   return edgeData(x, ks, fm, [](auto ib, auto ie) {});
 }
 
 template <class G, class J>
-auto edgeData(const G& x, J&& ks) {
+auto edgeData(const G& x, const J& ks) {
   return edgeData(x, ks, [&](int u, int v) { return x.edgeData(u, v); });
 }
 

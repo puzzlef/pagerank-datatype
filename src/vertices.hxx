@@ -41,7 +41,7 @@ auto vertices(const G& x) {
 // -----------
 
 template <class G, class J, class F, class D>
-auto vertexData(const G& x, J&& ks, F fm, D fp) {
+auto vertexData(const G& x, const J& ks, F fm, D fp) {
   using V = decltype(fm(0));
   vector<V> a;
   vector<int> b;
@@ -52,12 +52,12 @@ auto vertexData(const G& x, J&& ks, F fm, D fp) {
 }
 
 template <class G, class J, class F>
-auto vertexData(const G& x, J&& ks, F fm) {
+auto vertexData(const G& x, const J& ks, F fm) {
   return vertexData(x, ks, fm, [](auto ib, auto ie) {});
 }
 
 template <class G, class J>
-auto vertexData(const G& x, J&& ks) {
+auto vertexData(const G& x, const J& ks) {
   return vertexData(x, ks, [&](int u) { return x.vertexData(u); });
 }
 
@@ -84,7 +84,7 @@ auto createCompressedContainer(const G& x, const T& _) {
 
 
 template <class G, class T, class J>
-void decompressContainer(vector<T>& a, const G& x, const vector<T>& vs, J&& ks) {
+void decompressContainer(vector<T>& a, const G& x, const vector<T>& vs, const J& ks) {
   scatter(a, vs, ks);
 }
 
@@ -94,7 +94,7 @@ void decompressContainer(vector<T>& a, const G& x, const vector<T>& vs) {
 }
 
 template <class G, class T, class J>
-auto decompressContainer(const G& x, const vector<T>& vs, J&& ks) {
+auto decompressContainer(const G& x, const vector<T>& vs, const J& ks) {
   auto a = createContainer(x, T());
   decompressContainer(a, x, vs, ks);
   return a;
@@ -107,7 +107,7 @@ auto decompressContainer(const G& x, const vector<T>& vs) {
 
 
 template <class G, class T, class J>
-void compressContainer(vector<T>& a, const G& x, const vector<T>& vs, J&& ks) {
+void compressContainer(vector<T>& a, const G& x, const vector<T>& vs, const J& ks) {
   gather(a, vs, ks);
 }
 
@@ -117,7 +117,7 @@ void compressContainer(vector<T>& a, const G& x, const vector<T>& vs) {
 }
 
 template <class G, class T, class J>
-auto compressContainer(const G& x, const vector<T>& vs, J&& ks) {
+auto compressContainer(const G& x, const vector<T>& vs, const J& ks) {
   auto a = createCompressedContainer(x, T());
   compressContainer(a, x, vs, ks);
   return a;

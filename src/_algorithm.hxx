@@ -24,6 +24,27 @@ using std::back_inserter;
 
 
 
+// FOR-EACH
+// --------
+
+template <class I, class F>
+auto forEach(I ib, I ie, F fn) {
+  return for_each(ib, ie, fn);
+}
+
+template <class J, class F>
+auto forEach(const J& x, F fn) {
+  return for_each(x.begin(), x.end(), fn);
+}
+
+template <class J, class F>
+auto forEach(J& x, F fn) {
+  return for_each(x.begin(), x.end(), fn);
+}
+
+
+
+
 // ANY-OF
 // ------
 
@@ -198,7 +219,7 @@ auto indices(I ib, I ie) {
 }
 
 template <class J>
-auto indices(J&& x) {
+auto indices(const J& x) {
   return indices(x.begin(), x.end());
 }
 
@@ -240,17 +261,17 @@ void transform(J& x, F fn) {
 // --------------
 
 template <class L, class J, class K>
-void setDifference(L&& a, J&& x, K&& y) {
+void setDifference(L& a, const J& x, const K& y) {
   set_difference(x.begin(), x.end(), y.begin(), y.end(), a.begin());
 }
 
 template <class T, class J, class K>
-void setDifference(vector<T>& a, J&& x, K&& y) {
+void setDifference(vector<T>& a, const J& x, const K& y) {
   set_difference(x.begin(), x.end(), y.begin(), y.end(), back_inserter(a));
 }
 
 template <class J, class K>
-auto setDifference(J&& x, K&& y) {
+auto setDifference(const J& x, const K& y) {
   using I = decltype(x.begin());
   using T = typename iterator_traits<I>::value_type;
   vector<T> a; setDifference(a, x, y);
