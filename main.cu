@@ -14,17 +14,14 @@ void runPagerank(const G& x, const H& xt, int repeat) {
   vector<float>  *initFloat  = nullptr;
   vector<double> *initDouble = nullptr;
 
-  // Find pagerank using nvGraph (double).
-  auto a0 = pagerankNvgraph(x, xt, initDouble, {repeat});
-
   // Find pagerank using 64-bit floats.
-  auto a1 = pagerankMonolithicCuda(x, xt, initDouble, {repeat});
-  auto e1 = l1Norm(a1.ranks, a0.ranks);
+  auto a1 = pagerankNvgraph(x, xt, initDouble, {repeat});
+  auto e1 = l1Norm(a1.ranks, a1.ranks);
   printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankDouble\n", a1.time, a1.iterations, e1);
 
   // Find pagerank using 32-bit floats.
-  auto a2 = pagerankMonolithicCuda(x, xt, initFloat, {repeat});
-  auto e2 = l1Norm(a2.ranks, a0.ranks);
+  auto a2 = pagerankNvgraph(x, xt, initFloat, {repeat});
+  auto e2 = l1Norm(a2.ranks, a1.ranks);
   printf("[%09.3f ms; %03d iters.] [%.4e err.] pagerankFloat\n", a2.time, a2.iterations, e2);
 }
 

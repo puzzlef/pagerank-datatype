@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-src="pagerank-cuda-float-vs-double"
+src="pagerank-nvgraph-float-vs-double"
 out="/home/resources/Documents/subhajit/$src.log"
 ulimit -s unlimited
 printf "" > "$out"
