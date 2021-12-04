@@ -12,10 +12,10 @@ using std::transform;
 // SOURCE-OFFSETS
 // --------------
 
-template <class G, class J>
-auto sourceOffsets(const G& x, const J& ks) {
-  int i = 0;
-  vector<int> a;
+template <class G, class J, class K=int>
+auto sourceOffsets(const G& x, const J& ks, K _) {
+  K i = 0;
+  vector<K> a;
   a.reserve(x.order()+1);
   for (auto u : ks) {
     a.push_back(i);
@@ -25,9 +25,9 @@ auto sourceOffsets(const G& x, const J& ks) {
   return a;
 }
 
-template <class G>
-auto sourceOffsets(const G& x) {
-  return sourceOffsets(x, x.vertices());
+template <class G, class K=int>
+auto sourceOffsets(const G& x, K _) {
+  return sourceOffsets(x, x.vertices(), K());
 }
 
 
@@ -36,24 +36,24 @@ auto sourceOffsets(const G& x) {
 // DESTINATION-INDICES
 // -------------------
 
-template <class G, class J, class F>
-auto destinationIndices(const G& x, const J& ks, F fp) {
-  vector<int> a;
+template <class G, class J, class F, class K=int>
+auto destinationIndices(const G& x, const J& ks, F fp, K _) {
+  vector<K> a;
   auto ids = indices(ks);
   for (int u : ks) {
     append(a, x.edges(u));
     auto ie = a.end(), ib = ie-x.degree(u);
-    fp(ib, ie); transform(ib, ie, ib, [&](int v) { return ids[v]; });
+    fp(ib, ie); transform(ib, ie, ib, [&](auto v) { return ids[v]; });
   }
   return a;
 }
 
-template <class G, class J>
-auto destinationIndices(const G& x, const J& ks) {
-  return destinationIndices(x, ks, [](auto ib, auto ie) {});
+template <class G, class J, class K=int>
+auto destinationIndices(const G& x, const J& ks, K _) {
+  return destinationIndices(x, ks, [](auto ib, auto ie) {}, K());
 }
 
-template <class G>
-auto destinationIndices(const G& x) {
-  return destinationIndices(x, x.vertices());
+template <class G, class K=int>
+auto destinationIndices(const G& x, K _) {
+  return destinationIndices(x, x.vertices(), K());
 }

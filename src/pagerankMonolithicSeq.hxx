@@ -16,8 +16,8 @@ using std::swap;
 // PAGERANK-LOOP
 // -------------
 
-template <class T>
-int pagerankMonolithicSeqLoop(vector<T>& a, vector<T>& r, vector<T>& c, const vector<T>& f, const vector<int>& vfrom, const vector<int>& efrom, const vector<int>& vdata, int i, int n, int N, T p, T E, int L, int EF) {
+template <class T, class K=int>
+int pagerankMonolithicSeqLoop(vector<T>& a, vector<T>& r, vector<T>& c, const vector<T>& f, const vector<K>& vfrom, const vector<K>& efrom, const vector<int>& vdata, int i, int n, int N, T p, T E, int L, int EF) {
   int l = 0;
   while (l<L) {
     T c0 = pagerankTeleport(r, vdata, N, p);
@@ -42,17 +42,17 @@ int pagerankMonolithicSeqLoop(vector<T>& a, vector<T>& r, vector<T>& c, const ve
 // @param q  initial ranks (optional)
 // @param o  options {damping=0.85, tolerance=1e-6, maxIterations=500}
 // @returns {ranks, iterations, time}
-template <class G, class H, class T=float>
-PagerankResult<T> pagerankMonolithicSeq(const G& x, const H& xt, const vector<T> *q=nullptr, PagerankOptions<T> o={}) {
+template <class G, class H, class T, class K=int>
+PagerankResult<T> pagerankMonolithicSeq(const G& x, const H& xt, const vector<T> *q, PagerankOptions<T> o, K _) {
   int  N  = xt.order();    if (N==0) return PagerankResult<T>::initial(xt, q);
   auto ks = vertices(xt);
-  return pagerankSeq(xt, ks, 0, N, pagerankMonolithicSeqLoop<T>, q, o);
+  return pagerankSeq(xt, ks, 0, N, pagerankMonolithicSeqLoop<T, K>, q, o, K());
 }
 
-template <class G, class T=float>
-PagerankResult<T> pagerankMonolithicSeq(const G& x, const vector<T> *q=nullptr, PagerankOptions<T> o={}) {
+template <class G, class T, class K=int>
+PagerankResult<T> pagerankMonolithicSeq(const G& x, const vector<T> *q, PagerankOptions<T> o, K _) {
   auto xt = transposeWithDegree(x);
-  return pagerankMonolithicSeq(x, xt, q, o);
+  return pagerankMonolithicSeq(x, xt, q, o, K());
 }
 
 
@@ -61,16 +61,16 @@ PagerankResult<T> pagerankMonolithicSeq(const G& x, const vector<T> *q=nullptr, 
 // PAGERANK (DYNAMIC)
 // ------------------
 
-template <class G, class H, class T=float>
-PagerankResult<T> pagerankMonolithicSeqDynamic(const G& x, const H& xt, const G& y, const H& yt, const vector<T> *q=nullptr, PagerankOptions<T> o={}) {
+template <class G, class H, class T, class K=int>
+PagerankResult<T> pagerankMonolithicSeqDynamic(const G& x, const H& xt, const G& y, const H& yt, const vector<T> *q, PagerankOptions<T> o, K _) {
   int  N = yt.order();                           if (N==0) return PagerankResult<T>::initial(yt, q);
   auto [ks, n] = dynamicVertices(x, xt, y, yt);  if (n==0) return PagerankResult<T>::initial(yt, q);
-  return pagerankSeq(yt, ks, 0, n, pagerankMonolithicSeqLoop<T>, q, o);
+  return pagerankSeq(yt, ks, 0, n, pagerankMonolithicSeqLoop<T, K>, q, o, K());
 }
 
-template <class G, class T=float>
-PagerankResult<T> pagerankMonolithicSeqDynamic(const G& x, const G& y, const vector<T> *q=nullptr, PagerankOptions<T> o={}) {
+template <class G, class T, class K=int>
+PagerankResult<T> pagerankMonolithicSeqDynamic(const G& x, const G& y, const vector<T> *q, PagerankOptions<T> o, K _) {
   auto xt = transposeWithDegree(x);
   auto yt = transposeWithDegree(y);
-  return pagerankMonolithicSeqDynamic(x, xt, y, yt, q, o);
+  return pagerankMonolithicSeqDynamic(x, xt, y, yt, q, o, K());
 }

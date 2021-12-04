@@ -47,8 +47,8 @@ T pagerankTeleport(const vector<T>& r, const vector<int>& vdata, int N, T p) {
 // ------------------
 // For rank calculation from in-edges.
 
-template <class T>
-void pagerankCalculate(vector<T>& a, const vector<T>& c, const vector<int>& vfrom, const vector<int>& efrom, int i, int n, T c0) {
+template <class T, class K=int>
+void pagerankCalculate(vector<T>& a, const vector<T>& c, const vector<K>& vfrom, const vector<K>& efrom, int i, int n, T c0) {
   for (int v=i; v<i+n; v++)
     a[v] = c0 + sumAt(c, sliceIter(efrom, vfrom[v], vfrom[v+1]));
 }
@@ -76,15 +76,15 @@ T pagerankError(const vector<T>& x, const vector<T>& y, int i, int N, int EF) {
 // --------
 // For Monolithic / Levelwise PageRank.
 
-template <class H, class J, class M, class FL, class T=float>
-PagerankResult<T> pagerankSeq(const H& xt, const J& ks, int i, const M& ns, FL fl, const vector<T> *q, const PagerankOptions<T>& o) {
+template <class H, class J, class M, class FL, class T, class K=int>
+PagerankResult<T> pagerankSeq(const H& xt, const J& ks, int i, const M& ns, FL fl, const vector<T> *q, const PagerankOptions<T>& o, K _) {
   int  N  = xt.order();
   T    p  = o.damping;
   T    E  = o.tolerance;
   int  L  = o.maxIterations, l = 0;
   int  EF = o.toleranceNorm;
-  auto vfrom = sourceOffsets(xt, ks);
-  auto efrom = destinationIndices(xt, ks);
+  auto vfrom = sourceOffsets(xt, ks, K());
+  auto efrom = destinationIndices(xt, ks, K());
   auto vdata = vertexData(xt, ks);
   vector<T> a(N), r(N), c(N), f(N), qc;
   if (q) qc = compressContainer(xt, *q, ks);
@@ -92,8 +92,8 @@ PagerankResult<T> pagerankSeq(const H& xt, const J& ks, int i, const M& ns, FL f
     if (q) copy(r, qc);    // copy old ranks (qc), if given
     else fill(r, T(1)/N);
     copy(a, r);
-    mark([&] { pagerankFactor(f, vdata, 0, N, p); multiply(c, a, f, 0, N); });  // calculate factors (f) and contributions (c)
-    mark([&] { l = fl(a, r, c, f, vfrom, efrom, vdata, i, ns, N, p, E, L, EF); });     // calculate ranks of vertices
+    mark([&] { pagerankFactor(f, vdata, 0, N, p); multiply(c, a, f, 0, N); });      // calculate factors (f) and contributions (c)
+    mark([&] { l = fl(a, r, c, f, vfrom, efrom, vdata, i, ns, N, p, E, L, EF); });  // calculate ranks of vertices
   }, o.repeat);
   return {decompressContainer(xt, a, ks), l, t};
 }
