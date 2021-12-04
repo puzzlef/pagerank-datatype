@@ -1,21 +1,21 @@
 Performance of CUDA-based PageRank using **32-bit ints** vs **64-bit ints**
 for the CSR representation ([pull], [CSR]).
 
-`TODO!`
-
 This experiment was for comparing the performance between:
-1. Find pagerank using *32-bit floats* (**float**).
-2. Find pagerank using *64-bit floats* (**double**).
+1. Find pagerank using *32-bit ints* (**int32**).
+2. Find pagerank using *64-bit ints* (**int64**).
 
 Both datatypes were attempted on different types of graphs, running each
-technique 5 times per graph to get a good time measure. It seems using
-**double** datatype **increases execution time by a small factor** in all cases.
-With respect to **GM-RATIO**, using *64-bit floating point rank vector* is **24%
-slower** **(1.24x)** than using 32-bit floating point rank vector. With respect
-to **AM-RATIO**, using *64-bit floating point rank vector* is **34% slower
-(1.34x)**. This could be attributed to increased memory bandwidth requirement.
-However, since most of the data for a graph (CSR) is stored as 32-bit ints, it
-possibly makes up most of the memory bottleneck, and not the rank vector.
+technique 5 times per graph to get a good time measure. It seems using **int64**
+datatype **increases execution time by 6-35%**, when compared to *int32*. With
+respect to **GM-RATIO**, using *64-bit integer CSR representation* is **17%
+slower** **(0.85x)** than using 32-bit integer CSR representation. With respect
+to **AM-RATIO**, using *64-bit integer CSR representation* is **24% slower
+(0.81x)**. This could be attributed to increased memory bandwidth requirement.
+However, this overhead is somewhat small, despite the fact that most of the data
+for a graph is actually associated with the CSR representation. As the CSR
+representation is accessed linearly, improved memory coalescing might be the
+*saviour* here.
 
 All outputs are saved in [out](out/) and a small part of the output is listed
 here. Some [charts] are also included below, generated from [sheets]. The input
@@ -50,8 +50,8 @@ $ ...
 # ...
 ```
 
-[![](https://i.imgur.com/fA2z7sV.png)][sheetp]
-[![](https://i.imgur.com/fAvfjWI.png)][sheetp]
+[![](https://i.imgur.com/YF3yxlJ.png)][sheetp]
+[![](https://i.imgur.com/wpbOzEz.png)][sheetp]
 
 <br>
 <br>
@@ -67,7 +67,7 @@ $ ...
 <br>
 <br>
 
-[![](https://i.imgur.com/wmbbEzJ.jpg)](https://www.youtube.com/watch?v=rKv_l1RnSqs)
+[![](https://i.imgur.com/UN5uFOX.png)](https://www.youtube.com/watch?v=rKv_l1RnSqs)
 
 [Prof. Dip Sankar Banerjee]: https://sites.google.com/site/dipsankarban/
 [Prof. Kishore Kothapalli]: https://www.iiit.ac.in/people/faculty/kkishore/
@@ -75,6 +75,6 @@ $ ...
 ["graphs"]: https://github.com/puzzlef/graphs
 [pull]: https://github.com/puzzlef/pagerank-push-vs-pull
 [CSR]: https://github.com/puzzlef/pagerank-class-vs-csr
-[charts]: https://photos.app.goo.gl/WYDPyR6BaspyYByH8
-[sheets]: https://docs.google.com/spreadsheets/d/1gKWLl5fjutalsFTbYObPjmBrWTmZiTYgCgH_7s8UxtE/edit?usp=sharing
-[sheetp]: https://docs.google.com/spreadsheets/d/e/2PACX-1vSrHd3r7CW_4DJMuoqzvvCdWri5ZanzWG1d6wk-tEJEe-ek-toEDtx_enhvXpBxuZXbvRY4cuwk4-Lq/pubhtml
+[charts]: https://photos.app.goo.gl/Z3bJ8MTR8LrT3NHg9
+[sheets]: https://docs.google.com/spreadsheets/d/1d1YsfEv5967W4cZTJicZ0IQk23IXDIP97-WoVUozpCg/edit?usp=sharing
+[sheetp]: https://docs.google.com/spreadsheets/d/e/2PACX-1vQeG20hGWF2s5Li0h9zTdKxlRxM792216klp_s4X-eGQCXg-0_ri4qkE_qALZDl28bXUFy4bR16FNXA/pubhtml
