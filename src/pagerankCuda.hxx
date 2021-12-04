@@ -46,8 +46,8 @@ void pagerankFactorCu(T *a, const int *vdata, int i, int n, T p) {
 // PAGERANK-BLOCK
 // --------------
 
-template <class T, int S=BLOCK_LIMIT>
-__global__ void pagerankBlockKernel(T *a, const T *c, const int *vfrom, const int *efrom, int i, int n, T c0) {
+template <class T, class K=int, int S=BLOCK_LIMIT>
+__global__ void pagerankBlockKernel(T *a, const T *c, const K *vfrom, const K *efrom, int i, int n, T c0) {
   DEFINE(t, b, B, G);
   __shared__ T cache[S];
   for (int v=i+b; v<i+n; v+=G) {
@@ -59,8 +59,8 @@ __global__ void pagerankBlockKernel(T *a, const T *c, const int *vfrom, const in
   }
 }
 
-template <class T>
-void pagerankBlockCu(T *a, const T *c, const int *vfrom, const int *efrom, int i, int n, T c0) {
+template <class T, class K=int>
+void pagerankBlockCu(T *a, const T *c, const K *vfrom, const K *efrom, int i, int n, T c0) {
   int B = BLOCK_DIM_PRCB<T>();
   int G = min(n, GRID_DIM_PRCB<T>());
   pagerankBlockKernel<<<G, B>>>(a, c, vfrom, efrom, i, n, c0);
@@ -72,8 +72,8 @@ void pagerankBlockCu(T *a, const T *c, const int *vfrom, const int *efrom, int i
 // PAGERANK-THREAD
 // ---------------
 
-template <class T>
-__global__ void pagerankThreadKernel(T *a, const T *c, const int *vfrom, const int *efrom, int i, int n, T c0) {
+template <class T, class K=int>
+__global__ void pagerankThreadKernel(T *a, const T *c, const K *vfrom, const K *efrom, int i, int n, T c0) {
   DEFINE(t, b, B, G);
   for (int v=i+B*b+t; v<i+n; v+=G*B) {
     int ebgn = vfrom[v];
@@ -82,8 +82,8 @@ __global__ void pagerankThreadKernel(T *a, const T *c, const int *vfrom, const i
   }
 }
 
-template <class T>
-void pagerankThreadCu(T *a, const T *c, const int *vfrom, const int *efrom, int i, int n, T c0) {
+template <class T, class K=int>
+void pagerankThreadCu(T *a, const T *c, const K *vfrom, const K *efrom, int i, int n, T c0) {
   int B = BLOCK_DIM_PRCT<T>();
   int G = min(ceilDiv(n, B), GRID_DIM_PRCT<T>());
   pagerankThreadKernel<<<G, B>>>(a, c, vfrom, efrom, i, n, c0);
@@ -95,8 +95,8 @@ void pagerankThreadCu(T *a, const T *c, const int *vfrom, const int *efrom, int 
 // PAGERANK-SWITCHED
 // -----------------
 
-template <class T, class J>
-void pagerankSwitchedCu(T *a, const T *c, const int *vfrom, const int *efrom, int i, const J& ns, T c0) {
+template <class T, class J, class K=int>
+void pagerankSwitchedCu(T *a, const T *c, const K *vfrom, const K *efrom, int i, const J& ns, T c0) {
   for (int n : ns) {
     if (n>0) pagerankBlockCu (a, c, vfrom, efrom, i,  n, c0);
     else     pagerankThreadCu(a, c, vfrom, efrom, i, -n, c0);
@@ -219,19 +219,19 @@ T pagerankErrorReduce(const T *x, int N, int EF) {
 // --------
 // For Monolithic / Levelwise PageRank.
 
-template <class H, class J, class M, class FL, class T=float>
-PagerankResult<T> pagerankCuda(const H& xt, const J& ks, int i, const M& ns, FL fl, const vector<T> *q, const PagerankOptions<T>& o) {
+template <class H, class J, class M, class FL, class T, class K=int>
+PagerankResult<T> pagerankCuda(const H& xt, const J& ks, int i, const M& ns, FL fl, const vector<T> *q, const PagerankOptions<T>& o, K _) {
   int  N  = xt.order();
   T    p  = o.damping;
   T    E  = o.tolerance;
   int  L  = o.maxIterations, l = 0;
   int  EF = o.toleranceNorm;
   int  R  = reduceSizeCu<T>(N);
-  auto vfrom = sourceOffsets(xt, ks);
-  auto efrom = destinationIndices(xt, ks);
+  auto vfrom = sourceOffsets(xt, ks, K());
+  auto efrom = destinationIndices(xt, ks, K());
   auto vdata = vertexData(xt, ks);
-  int VFROM1 = vfrom.size() * sizeof(int);
-  int EFROM1 = efrom.size() * sizeof(int);
+  int VFROM1 = vfrom.size() * sizeof(K);
+  int EFROM1 = efrom.size() * sizeof(K);
   int VDATA1 = vdata.size() * sizeof(int);
   int N1 = N * sizeof(T);
   int R1 = R * sizeof(T);
@@ -240,7 +240,7 @@ PagerankResult<T> pagerankCuda(const H& xt, const J& ks, int i, const M& ns, FL 
 
   T *e,  *r0;
   T *eD, *r0D, *fD, *rD, *cD, *aD;
-  int *vfromD, *efromD, *vdataD;
+  K *vfromD, *efromD; int *vdataD;
   // TRY( cudaProfilerStart() );
   TRY( cudaSetDeviceFlags(cudaDeviceMapHost) );
   TRY( cudaHostAlloc(&e,  R1, cudaHostAllocDefault) );

@@ -478,8 +478,8 @@ void sumSqrCu(T *a, const T *x, int N) {
 // SUM-AT
 // ------
 
-template <class T>
-__device__ T sumAtKernelLoop(const T *x, const int *is, int IS, int i, int DI) {
+template <class T, class K=int>
+__device__ T sumAtKernelLoop(const T *x, const K *is, int IS, int i, int DI) {
   T a = T();
   for (; i<IS; i+=DI)
     a += x[is[i]];
