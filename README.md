@@ -1,4 +1,5 @@
-Performance of [nvGraph] PageRank using **32-bit floats** vs **64-bit floats**.
+Performance of [nvGraph] PageRank using **32-bit floats** vs **64-bit floats**
+for the rank vector.
 
 This experiment was for comparing the performance between:
 1. Find pagerank using *32-bit floats* (**float**).
@@ -6,11 +7,15 @@ This experiment was for comparing the performance between:
 
 Both datatypes were attempted on different types of graphs, running each
 technique 5 times per graph to get a good time measure. It seems using
-**double** datatype **increases execution time by a small factor** in all cases.
-With respect to **GM-RATIO**, using *64-bit floating point rank vector* is **52%
-slower** **(1.52x)** than using 32-bit floating point rank vector. With respect
-to **AM-RATIO**, using *64-bit floating point rank vector* is **67% slower
-(1.67x)**. This could be attributed to increased memory bandwidth requirement.
+**double** datatype **increases execution time by 17-103%**, when compared to
+*float*. With respect to **GM-RATIO**, using *64-bit floating point rank vector*
+is **52% slower** **(0.66x)** than using 32-bit floating point rank vector. With
+respect to **AM-RATIO**, using *64-bit floating point rank vector* is **67%
+slower (0.60x)**. This could be attributed to increased memory bandwidth
+requirement. However, this overhead is significant, despite the fact that most
+of the data for a graph is actually associated with the CSR representation, and
+not the rank vector. As the rank vector is quite likely accessed randomly, low
+memory coalescing might be the *culprit* here.
 
 All outputs are saved in [out](out/) and a small part of the output is listed
 here. Some [charts] are also included below, generated from [sheets]. The input
@@ -21,7 +26,7 @@ from [Prof. Dip Sankar Banerjee] and [Prof. Kishore Kothapalli].
 <br>
 
 ```bash
-$ g++ -O3 main.cxx
+$ nvcc -std=c++17 -Xcompiler -lnvgraph -O3 main.cu
 $ ./a.out ~/data/min-1DeadEnd.mtx
 $ ./a.out ~/data/min-2SCC.mtx
 $ ...
