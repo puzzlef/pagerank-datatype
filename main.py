@@ -1,7 +1,7 @@
-# https://www.kaggle.com/wolfram77/puzzlef-pagerank-cuda-float-vs-double
+# https://www.kaggle.com/wolfram77/puzzlef-pagerank-cuda-adjust-rank-datatype
 import os
 from IPython.display import FileLink
-src="pagerank-cuda-float-vs-double"
+src="pagerank-cuda-adjust-rank-datatype"
 inp="/kaggle/input/graphs"
 out="{}.txt".format(src)
 !printf "" > "$out"
