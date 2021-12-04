@@ -26,7 +26,7 @@ from [Prof. Dip Sankar Banerjee] and [Prof. Kishore Kothapalli].
 <br>
 
 ```bash
-$ g++ -O3 main.cxx
+$ nvcc -std=c++17 -Xcompiler -lnvgraph -O3 main.cu
 $ ./a.out ~/data/min-1DeadEnd.mtx
 $ ./a.out ~/data/min-2SCC.mtx
 $ ...
@@ -36,16 +36,16 @@ $ ...
 # Loading graph /home/subhajit/data/web-Stanford.mtx ...
 # order: 281903 size: 2312497 {}
 # order: 281903 size: 2312497 {} (transposeWithDegree)
-# [00011.816 ms; 063 iters.] [6.5175e-07 err.] pagerankDouble
-# [00011.265 ms; 063 iters.] [7.1775e-07 err.] pagerankFloat
+# [00011.290 ms; 063 iters.] [7.0093e-07 err.] pagerankInt32
+# [00012.017 ms; 063 iters.] [7.0093e-07 err.] pagerankInt64
 #
 # ...
 #
 # Loading graph /home/subhajit/data/soc-LiveJournal1.mtx ...
 # order: 4847571 size: 68993773 {}
 # order: 4847571 size: 68993773 {} (transposeWithDegree)
-# [00234.717 ms; 051 iters.] [3.2842e-06 err.] pagerankDouble
-# [00158.415 ms; 051 iters.] [3.1327e-06 err.] pagerankFloat
+# [00157.232 ms; 051 iters.] [3.1616e-06 err.] pagerankInt32
+# [00205.449 ms; 051 iters.] [3.1616e-06 err.] pagerankInt64
 #
 # ...
 ```
