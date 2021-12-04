@@ -28,7 +28,7 @@ from [Prof. Dip Sankar Banerjee] and [Prof. Kishore Kothapalli].
 <br>
 
 ```bash
-$ g++ -O3 main.cxx
+$ g++ -std=c++17 -O3 main.cxx
 $ ./a.out ~/data/min-1DeadEnd.mtx
 $ ./a.out ~/data/min-2SCC.mtx
 $ ...
@@ -38,16 +38,16 @@ $ ...
 # Loading graph /home/subhajit/data/web-Stanford.mtx ...
 # order: 281903 size: 2312497 {}
 # order: 281903 size: 2312497 {} (transposeWithDegree)
-# [00501.080 ms; 063 iters.] [0.0000e+00 err.] pagerankDouble
-# [00408.583 ms; 063 iters.] [4.8093e-06 err.] pagerankFloat
+# [00414.212 ms; 063 iters.] [0.0000e+00 err.] pagerankInt32
+# [00468.302 ms; 063 iters.] [0.0000e+00 err.] pagerankInt64
 #
 # ...
 #
 # Loading graph /home/subhajit/data/soc-LiveJournal1.mtx ...
 # order: 4847571 size: 68993773 {}
 # order: 4847571 size: 68993773 {} (transposeWithDegree)
-# [16090.539 ms; 051 iters.] [0.0000e+00 err.] pagerankDouble
-# [12090.672 ms; 051 iters.] [2.0580e-03 err.] pagerankFloat
+# [12163.961 ms; 051 iters.] [0.0000e+00 err.] pagerankInt32
+# [13902.273 ms; 051 iters.] [0.0000e+00 err.] pagerankInt64
 #
 # ...
 ```
