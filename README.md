@@ -1,6 +1,8 @@
 Performance of PageRank using **32-bit floats** vs **64-bit floats** for the
 rank vector ([pull], [CSR]).
 
+`TODO!`
+
 This experiment was for comparing the performance between:
 1. Find pagerank using *32-bit floats* (**float**).
 2. Find pagerank using *64-bit floats* (**double**).

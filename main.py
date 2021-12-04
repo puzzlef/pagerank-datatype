@@ -1,7 +1,7 @@
-# https://www.kaggle.com/wolfram77/puzzlef-pagerank-adjust-rank-datatype
+# https://www.kaggle.com/wolfram77/puzzlef-pagerank-adjust-csr-datatype
 import os
 from IPython.display import FileLink
-src="pagerank-adjust-rank-datatype"
+src="pagerank-adjust-csr-datatype"
 inp="/kaggle/input/graphs"
 out="{}.txt".format(src)
 !printf "" > "$out"
