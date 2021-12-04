@@ -1,5 +1,7 @@
-Performance of CUDA-based PageRank using **32-bit floats** vs **64-bit floats**
-for the rank vector ([pull], [CSR]).
+Performance of CUDA-based PageRank using **32-bit ints** vs **64-bit ints**
+for the CSR representation ([pull], [CSR]).
+
+`TODO!`
 
 This experiment was for comparing the performance between:
 1. Find pagerank using *32-bit floats* (**float**).

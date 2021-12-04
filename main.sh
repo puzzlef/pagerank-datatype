@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-src="pagerank-cuda-adjust-rank-datatype"
+src="pagerank-cuda-adjust-csr-datatype"
 out="/home/resources/Documents/subhajit/$src.log"
 ulimit -s unlimited
 printf "" > "$out"
